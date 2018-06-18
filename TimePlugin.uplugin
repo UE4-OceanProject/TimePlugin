@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "TimePlugin",
+  "Description": "Test",
+  "Category": "Other",
+  "CreatedBy": "DotCam",
+  "CreatedByURL": "Test",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "TimePlugin",
+      "Type": "Developer",
+      "LoadingPhase": "PreDefault"
+    }
+  ]
+}
