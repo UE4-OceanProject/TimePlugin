@@ -35,7 +35,7 @@ class ATimeManager : public AActor
 public:
 
 	// Current Local Clock Time (LCT)
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		FTimeDateStruct CurrentLocalTime;
 
 	// The Latitude of the local location (-90 to +90 in degrees)
@@ -51,7 +51,7 @@ public:
 		int32 OffsetUTC = 0;
 
 	// The number of hours (0 or 1) to subtract for the current TimeDate for Daylight Savings Time (if enabled)
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
 		int32 OffsetDST = 0;
 
 	// Determines whether Daylight Savings time should be enabled for the local location
@@ -59,14 +59,14 @@ public:
 		bool bAllowDaylightSavings = false;
 
 	// Determines whether Daylight Savings is active for the current date
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
 		bool bDaylightSavingsActive = false;
 
 	// The value to multiply the base game time by (1 second real time is multiplied to equal X seconds in game)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		float TimeScaleMultiplier = 1.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
 		int32 DayOfYear = 0;
 
 
