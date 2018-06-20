@@ -74,10 +74,6 @@ public:
 	// PUBLIC FUNCTIONS
 	// -------------------
 
-	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		ATimeManager* GetTimeManager();
-
-
 	/**
 	* Name: InitializeCalendar
 	* Description: Initializes the calendar with the provided TimeDate, and validates the range of all input values.

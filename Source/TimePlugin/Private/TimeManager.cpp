@@ -106,11 +106,6 @@ float ATimeManager::GetElapsedDayInMinutes()
 	return (float)InternalTime.GetTimeOfDay().GetTotalMinutes();
 }
 
-ATimeManager* ATimeManager::GetTimeManager()
-{
-	return this;
-}
-
 void ATimeManager::IncrementTime(float deltaTime)
 {
 	if (!bIsCalendarInitialized)

@@ -31,7 +31,7 @@ class UTimeManagerFunctionLibrary :	public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Time Instance", Keywords = ""), Category = "TimeManager")
 	static ATimeManager * GetTimeManager()
 	{
-		return FTimePlugin::Get().TimeManagerActor->GetTimeManager();
+		return FTimePlugin::Get().TimeManagerActor;
 	}/*
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "InitializeCalendar", Keywords = ""), Category = "TimeManager")
