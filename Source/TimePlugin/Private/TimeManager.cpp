@@ -41,17 +41,30 @@ void ATimeManager::InitializeCalendar(FTimeDateStruct in_Time, int32 in_OffsetUT
 		bDaylightSavingsActive = true;
 	}
 
-	OffsetDST = in_bAllowDaylightSavings && bDaylightSavingsActive ? 1 : 0;
-
-	// Local Standard Time Meridian (degrees) = 15 * Hour Offset from UTC
-	LSTM = 15 * in_OffsetUTC;
-
-	SpanUTC = FTimespan((FMath::Abs(OffsetUTC) + OffsetDST), 0, 0);
+	OffsetDST = in_bAllowDaylightSavings && bDaylightSavingsActive ? -1 : 0;
 
 	Latitude = FMath::Clamp(in_Latitude, -90.0f, 90.0f);
 	Longitude = FMath::Clamp(in_Longitude, -180.0f, 180.0f);
 
-	CurrentLocalTime = in_Time;
+	//CurrentLocalTime = in_Time;
+	OffsetDST = bDaylightSavingsActive ? -1 : 0;
+
+	FDateTime tempTime = ConvertToDateTime(in_Time);
+
+	SpanUTC = FTimespan((FMath::Abs(OffsetUTC) + OffsetDST), 0, 0);
+
+	if (OffsetUTC < 0)
+	{
+		tempTime = tempTime - SpanUTC;
+	}
+	else
+	{
+		tempTime = tempTime - SpanUTC;
+	}
+
+	CurrentLocalTime = ConvertToTimeDate(tempTime);
+
+
 	bIsCalendarInitialized = true;
 }
 

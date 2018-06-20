@@ -46,10 +46,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		float Longitude = 0.0f;
 
-	// The value of the local Standard Time Meridian (15deg intervals)
-	UPROPERTY(BlueprintReadOnly, Category = "Sun Debug")
-		int32 LSTM = 0;
-
 	// The number of hours offset from UTC for the local location (value in the range of -12 to +12 hours from UTC)	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		int32 OffsetUTC = 0;
@@ -70,7 +66,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		float TimeScaleMultiplier = 1.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Sun Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 		int32 DayOfYear = 0;
 
 
