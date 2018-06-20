@@ -6,10 +6,11 @@
 #include "ModuleManager.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(TimePlugin, Log, All);
+
 class TIMEPLUGIN_API FTimePlugin : public IModuleInterface
 {
 public:
-
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;

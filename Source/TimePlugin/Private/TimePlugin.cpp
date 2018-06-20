@@ -3,10 +3,12 @@
 #include "TimePlugin.h"
 #include "EngineUtils.h"
 
-
+DEFINE_LOG_CATEGORY(TimePlugin);
 
 void FTimePlugin::StartupModule()
 {
+	UE_LOG(TimePlugin, Warning, TEXT("TimePlugin StartupModle() Register OnWorldCreated delegate"));
+
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	//Create our delegate type
 	FWorldDelegates::FWorldInitializationEvent::FDelegate OnWorldCreatedDelegate;
