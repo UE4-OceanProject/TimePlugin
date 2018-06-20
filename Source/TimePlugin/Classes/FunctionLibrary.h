@@ -1,6 +1,4 @@
 #pragma once
-#include "TimeDateStruct.h"
-#include "TimeManager.h"
 #include "TimePlugin.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "FunctionLibrary.generated.h"
