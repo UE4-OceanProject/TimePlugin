@@ -120,7 +120,7 @@ float ATimeManager::GetElapsedDayInMinutes()
 
 void ATimeManager::IncrementTime(float deltaTime)
 {
-	if (!bFreezeTime)
+	if (bFreezeTime)
 	{
 		return;
 	}
