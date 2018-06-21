@@ -27,12 +27,27 @@
 
 //An actor based calendar system for tracking date + time, and Sun/Moon rotation/phase.
 //Transient will prevent this from being saved since we autospawn this anyways
-UCLASS(NotBlueprintable, Transient)
+//Removed the Transient property, plugin will spawn this if its missing, and wont if its already there
+UCLASS(NotBlueprintable)
 class ATimeManager : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
 public:
+
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+	// Use System Time instead of CurrentLocalTime struct
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+		bool bUseSystemTime = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+		bool bAutoTick = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+		bool bFreezeTime = false;
 
 	// Current Local Clock Time (LCT)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
@@ -75,13 +90,13 @@ public:
 	// -------------------
 
 	/**
-	* Name: InitializeCalendar
+	* Name: InitializeTime
 	* Description: Initializes the calendar with the provided TimeDate, and validates the range of all input values.
 	*
 	* @param: time (TimeDate) - The TimeDate value to calculate from.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void InitializeCalendar(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude);
+		void InitializeTime(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude);
 
 
 	/**
@@ -127,7 +142,7 @@ public:
 
 	/**
 	* Name: SetCurrentLocalTime
-	* Description: Sets the local time from minutes, and runs InitializeCalendar to validate and set variables.
+	* Description: Sets the local time from minutes, and runs InitializeTime to validate and set variables.
 	*
 	* @param: time (float) - The number of minutes (+ frac minutes) to calculate from.
 	*/
@@ -177,8 +192,6 @@ public:
 
 	//These would be normally be private, but plugins will need this stuff
 	//These are still private blueprint wise
-
-	bool bIsCalendarInitialized = false;
 
 	FDateTime InternalTime;
 

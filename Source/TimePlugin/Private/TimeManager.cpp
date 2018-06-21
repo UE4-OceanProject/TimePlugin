@@ -26,7 +26,26 @@ ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ATimeManager::InitializeCalendar(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude)
+void ATimeManager::OnConstruction(const FTransform& Transform)
+{
+}
+
+void ATimeManager::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ATimeManager::Tick(float DeltaTime)
+{
+	if (bAutoTick)
+	{
+	IncrementTime(DeltaTime);
+	}
+
+	Super::Tick(DeltaTime);
+}
+
+void ATimeManager::InitializeTime(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude)
 {
 	in_Time = ValidateTimeDate(in_Time);
 
@@ -64,8 +83,6 @@ void ATimeManager::InitializeCalendar(FTimeDateStruct in_Time, int32 in_OffsetUT
 
 	CurrentLocalTime = ConvertToTimeDate(tempTime);
 
-
-	bIsCalendarInitialized = true;
 }
 
 FTimeDateStruct ATimeManager::ValidateTimeDate(FTimeDateStruct time)
@@ -98,21 +115,15 @@ FDateTime ATimeManager::ConvertToDateTime(FTimeDateStruct td)
 
 float ATimeManager::GetElapsedDayInMinutes()
 {
-	if (!bIsCalendarInitialized)
-	{
-		return 0.0f;
-	}
-
 	return (float)InternalTime.GetTimeOfDay().GetTotalMinutes();
 }
 
 void ATimeManager::IncrementTime(float deltaTime)
 {
-	if (!bIsCalendarInitialized)
+	if (!bFreezeTime)
 	{
 		return;
 	}
-
 	InternalTime += FTimespan::FromSeconds(deltaTime * TimeScaleMultiplier);
 
 	if (CurrentLocalTime.Day != InternalTime.GetDay())
@@ -137,7 +148,7 @@ void ATimeManager::SetCurrentLocalTime(float time)
 	FTimeDateStruct newTD = FTimeDateStruct(InternalTime.GetYear(), InternalTime.GetMonth(), InternalTime.GetDay(),
 		FPlatformMath::FloorToInt(time / 60), minute, second, millisec);
 
-	InitializeCalendar(newTD, OffsetUTC, bAllowDaylightSavings, Latitude, Longitude);
+	InitializeTime(newTD, OffsetUTC, bAllowDaylightSavings, Latitude, Longitude);
 }
 
 
@@ -161,22 +172,12 @@ int32 ATimeManager::GetDayOfYear(FTimeDateStruct time)
 
 float ATimeManager::GetDayPhase()
 {
-	if (!bIsCalendarInitialized)
-	{
-		return 0.0f;
-	}
-
 	return GetElapsedDayInMinutes() / 1440.0;
 }
 
 
 float ATimeManager::GetYearPhase()
 {
-	if (!bIsCalendarInitialized)
-	{
-		return 0.0f;
-	}
-
 	return InternalTime.DaysInYear(InternalTime.GetYear()) / (InternalTime.GetDayOfYear() + (GetElapsedDayInMinutes() / 1440));
 }
 
