@@ -7,7 +7,7 @@
 * See LICENSE for full licensing details.
 * =================================================*/
 
-#include "TimeDateStruct.h"
+#pragma once
 
-// This file must be present for FTimeDateStruct & FLocation
-
+#include "CoreMinimal.h"
+#include "EngineMinimal.h"

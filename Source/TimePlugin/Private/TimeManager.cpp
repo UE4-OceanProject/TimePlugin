@@ -1,11 +1,13 @@
 /*=================================================
+* For parts referencing UE4 code, the following copyright applies:
+* Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+*
 * Feel free to use this software in any commercial/free game.
 * Selling this as a plugin/item, in whole or part, is not allowed.
-* See "OceanProject::TimeManager.License.md" for full licensing details.
+* See LICENSE for full licensing details.
 * =================================================*/
 
 #include "TimeManager.h"
-#include "UtilityFunctions.h"
 
 ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
@@ -87,30 +89,6 @@ void ATimeManager::InitializeTime(FTimeDateStruct in_Time)
 
 }
 
-FTimeDateStruct ATimeManager::ValidateTimeDate(FTimeDateStruct time)
-{
-	time.Year = FMath::Clamp(time.Year, 1, 9999);
-	time.Month = FMath::Clamp(time.Month, 1, 12);
-	time.Day = FMath::Clamp(time.Day, 1, GetDaysInMonth(time.Year, time.Month));
-	time.Hour = FMath::Clamp(time.Hour, 0, 23);
-	time.Minute = FMath::Clamp(time.Minute, 0, 59);
-	time.Second = FMath::Clamp(time.Second, 0, 59);
-	time.Millisecond = FMath::Clamp(time.Millisecond, 0, 999);
-
-	return time;
-}
-
-FTimeDateStruct ATimeManager::ConvertToTimeDate(FDateTime dt)
-{
-	return FTimeDateStruct(dt.GetYear(), dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), dt.GetSecond(), dt.GetMillisecond());
-}
-
-FDateTime ATimeManager::ConvertToDateTime(FTimeDateStruct td)
-{
-	return FDateTime(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond);
-}
-
-/* --- Time of Day --- */
 
 void ATimeManager::IncrementTime(float deltaTime)
 {
@@ -142,4 +120,79 @@ void ATimeManager::SetCurrentLocalTime(float time)
 		FPlatformMath::FloorToInt(time / 60), minute, second, millisec);
 
 	InitializeTime(newTD);
+}
+
+
+
+
+/* --- Utility Functions --- */
+
+
+FTimeDateStruct ATimeManager::ValidateTimeDate(FTimeDateStruct time)
+{
+	time.Year = FMath::Clamp(time.Year, 1, 9999);
+	time.Month = FMath::Clamp(time.Month, 1, 12);
+	time.Day = FMath::Clamp(time.Day, 1, GetDaysInMonth(time.Year, time.Month));
+	time.Hour = FMath::Clamp(time.Hour, 0, 23);
+	time.Minute = FMath::Clamp(time.Minute, 0, 59);
+	time.Second = FMath::Clamp(time.Second, 0, 59);
+	time.Millisecond = FMath::Clamp(time.Millisecond, 0, 999);
+
+	return time;
+}
+
+FTimeDateStruct ATimeManager::ConvertToTimeDate(FDateTime dt)
+{
+	return FTimeDateStruct(dt.GetYear(), dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), dt.GetSecond(), dt.GetMillisecond());
+}
+
+FDateTime ATimeManager::ConvertToDateTime(FTimeDateStruct td)
+{
+	return FDateTime(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond);
+}
+
+float ATimeManager::GetElapsedDayInMinutes()
+{
+	return (float)InternalTime.GetTimeOfDay().GetTotalMinutes();
+}
+
+int32 ATimeManager::GetDaysInYear(int32 year)
+{
+	return FDateTime::DaysInYear(year);
+}
+
+
+int32 ATimeManager::GetDaysInMonth(int32 year, int32 month)
+{
+	return FDateTime::DaysInMonth(year, month);
+}
+
+
+int32 ATimeManager::GetDayOfYear(FTimeDateStruct time)
+{
+	return ConvertToDateTime(time).GetDayOfYear();
+}
+
+
+float ATimeManager::GetDayPhase()
+{
+	return GetElapsedDayInMinutes() / 1440.0;
+}
+
+
+float ATimeManager::GetYearPhase()
+{
+	return InternalTime.DaysInYear(InternalTime.GetYear()) / (InternalTime.GetDayOfYear() + (GetElapsedDayInMinutes() / 1440));
+}
+
+
+bool ATimeManager::IsLeapYear(int32 year)
+{
+	bool isLeap = false;
+
+	if ((year % 4) == 0)
+	{
+		isLeap = (year % 100) == 0 ? (year % 400) == 0 : true;
+	}
+	return isLeap;
 }

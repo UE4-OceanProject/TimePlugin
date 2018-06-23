@@ -1,21 +1,10 @@
 /*=================================================
-* FileName: TimeManager.h
-*
-* Created by: DotCam
-* Project name: OceanProject
-* Unreal Engine version: 4.18.3
-* Created on: 2015/07/12
-*
-* Last Edited on: 2018/03/15
-* Last Edited by: Felipe "Zoc" Silveira
-*
-* -------------------------------------------------
 * For parts referencing UE4 code, the following copyright applies:
 * Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 *
 * Feel free to use this software in any commercial/free game.
 * Selling this as a plugin/item, in whole or part, is not allowed.
-* See "OceanProject\License.md" for full licensing details.
+* See LICENSE for full licensing details.
 * =================================================*/
 
 #pragma once
@@ -23,7 +12,6 @@
 #include "GameFramework/Actor.h"
 #include "TimeDateStruct.h"
 #include "TimeManager.generated.h"
-
 
 //An actor based calendar system for tracking date + time, and Sun/Moon rotation/phase.
 //Transient will prevent this from being saved since we autospawn this anyways
@@ -100,6 +88,32 @@ public:
 
 
 	/**
+	* Name: SetCurrentLocalTime
+	* Description: Sets the local time from minutes, and runs InitializeTime to validate and set variables.
+	*
+	* @param: time (float) - The number of minutes (+ frac minutes) to calculate from.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
+		void SetCurrentLocalTime(float time);
+	
+
+	/**
+	* Name: IncrementTime
+	* Description: Increments time based on the deltaSeconds * TimeScaleMultiplier
+	*
+	* @param: deltaSeconds (float) - The Tick (or accumulated ticks) delta time since the last update
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
+		void IncrementTime(float deltaSeconds);
+
+
+
+
+
+
+	/* --- Utility Functions --- */
+	
+	/**
 	* Name: GetDayOfYear
 	* Description: Gets the number of full days elapsed in the current year for the provided date.
 	*
@@ -139,18 +153,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 		float GetElapsedDayInMinutes();
 
-
-	/**
-	* Name: SetCurrentLocalTime
-	* Description: Sets the local time from minutes, and runs InitializeTime to validate and set variables.
-	*
-	* @param: time (float) - The number of minutes (+ frac minutes) to calculate from.
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void SetCurrentLocalTime(float time);
-
-
-
 	/**
 	* Name: GetDayPhase
 	* Description: Gets the current day phase in a 0 to 1 range (fractional).
@@ -179,16 +181,6 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 		bool IsLeapYear(int32 year);
-
-
-	/**
-	* Name: IncrementTime
-	* Description: Increments time based on the deltaSeconds * TimeScaleMultiplier
-	*
-	* @param: deltaSeconds (float) - The Tick (or accumulated ticks) delta time since the last update
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void IncrementTime(float deltaSeconds);
 
 	//These would be normally be private, but plugins will need this stuff
 	//These are still private blueprint wise
