@@ -17,18 +17,62 @@ public class TimePlugin : ModuleRules
 
     public TimePlugin(ReadOnlyTargetRules Target) : base(Target)
     {
-        PrivateIncludePaths.AddRange(new string[] { "TimePlugin/Private" });
+        //Our PrivatePCH that we want to globally #include
+        PrivatePCHHeaderFile = "Classes/TimePluginPrivatePCH.h";
 
         // Make sure UBT reminds us of how to keep the project IWYU compliant
         bEnforceIWYU = true;
 
         //Enable IWYU but keep our PrivatePCH in use
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        //Our PrivatePCH that we want to globally #include
-        PrivatePCHHeaderFile = "Private/TimePluginPrivatePCH.h";
+        PublicIncludePaths.AddRange(
+            new string[] {
+                "TimePlugin/Public"
+				
+				// ... add public include paths required here ...
+			}
+            );
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Engine", "Core", "CoreUObject", "InputCore", "RHI", "RenderCore" });
+
+        PrivateIncludePaths.AddRange(
+            new string[] {
+                "TimePlugin/Private",
+				
+				// ... add other private include paths required here ...
+			}
+            );
+
+
+        PublicDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "Core",
+				
+				// ... add other public dependencies that you statically link with here ...
+			}
+            );
+
+
+        PrivateDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "CoreUObject",
+                "Engine",
+                "Slate",
+                "SlateCore",
+
+				// ... add private dependencies that you statically link with here ...	
+			}
+            );
+
+
+        DynamicallyLoadedModuleNames.AddRange(
+            new string[]
+            {
+				// ... add any modules that your module loads dynamically here ...
+			}
+            );
     }
 }
 

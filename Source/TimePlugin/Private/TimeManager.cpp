@@ -1,25 +1,11 @@
 /*=================================================
-* FileName: TimeManager.cpp
-*
-* Created by: DotCam
-* Project name: OceanProject
-* Unreal Engine version: 4.18.3
-* Created on: 2015/07/12
-*
-* Last Edited on: 2018/06/15
-* Last Edited by: Dotcam
-*
-* -------------------------------------------------
-* For parts referencing UE4 code, the following copyright applies:
-* Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
-*
 * Feel free to use this software in any commercial/free game.
 * Selling this as a plugin/item, in whole or part, is not allowed.
-* See "OceanProject\License.md" for full licensing details.
+* See "OceanProject::TimeManager.License.md" for full licensing details.
 * =================================================*/
 
 #include "TimeManager.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "UtilityFunctions.h"
 
 ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
@@ -28,29 +14,43 @@ ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 void ATimeManager::OnConstruction(const FTransform& Transform)
 {
+
 }
 
 void ATimeManager::BeginPlay()
 {
 	Super::BeginPlay();
+	if (bUseSystemTime)
+	{
+		int32 Year, Month, Day, DayOfWeek;
+		int32 Hour, Minute, Second, Millisecond;
+
+		FPlatformTime::SystemTime(Year, Month, DayOfWeek, Day, Hour, Minute, Second, Millisecond);
+		FTimeDateStruct SystemTime = FTimeDateStruct(Year, Month, Day, Hour, Minute, Second, Millisecond);
+
+		InitializeTime(SystemTime);
+	}
+	else
+	{
+		InitializeTime(CurrentLocalTime);
+	}
 }
 
 void ATimeManager::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 	if (bAutoTick)
 	{
-	IncrementTime(DeltaTime);
+  	IncrementTime(DeltaTime);
 	}
-
-	Super::Tick(DeltaTime);
 }
 
-void ATimeManager::InitializeTime(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude)
+void ATimeManager::InitializeTime(FTimeDateStruct in_Time)
 {
 	in_Time = ValidateTimeDate(in_Time);
 
 	InternalTime = ConvertToDateTime(in_Time);
-	OffsetUTC = FMath::Clamp(in_OffsetUTC, -12, 12);
+	OffsetUTC = FMath::Clamp(OffsetUTC, -12, 12);
 
 	DayOfYear = InternalTime.GetDayOfYear();
 	int32 leapDays = IsLeapYear(in_Time.Year);
@@ -60,12 +60,14 @@ void ATimeManager::InitializeTime(FTimeDateStruct in_Time, int32 in_OffsetUTC, b
 		bDaylightSavingsActive = true;
 	}
 
-	OffsetDST = in_bAllowDaylightSavings && bDaylightSavingsActive ? -1 : 0;
+	OffsetDST = bAllowDaylightSavings && bDaylightSavingsActive ? -1 : 0;
 
-	Latitude = FMath::Clamp(in_Latitude, -90.0f, 90.0f);
-	Longitude = FMath::Clamp(in_Longitude, -180.0f, 180.0f);
+	// Local Standard Time Meridian (degrees) = 15 * Hour Offset from UTC
+	//LSTM = 15 * OffsetUTC;
 
-	//CurrentLocalTime = in_Time;
+	Latitude = FMath::Clamp(Latitude, -90.0f, 90.0f);
+	Longitude = FMath::Clamp(Longitude, -180.0f, 180.0f);
+
 	OffsetDST = bDaylightSavingsActive ? -1 : 0;
 
 	FDateTime tempTime = ConvertToDateTime(in_Time);
@@ -98,8 +100,6 @@ FTimeDateStruct ATimeManager::ValidateTimeDate(FTimeDateStruct time)
 	return time;
 }
 
-
-
 FTimeDateStruct ATimeManager::ConvertToTimeDate(FDateTime dt)
 {
 	return FTimeDateStruct(dt.GetYear(), dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), dt.GetSecond(), dt.GetMillisecond());
@@ -110,13 +110,7 @@ FDateTime ATimeManager::ConvertToDateTime(FTimeDateStruct td)
 	return FDateTime(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond);
 }
 
-
 /* --- Time of Day --- */
-
-float ATimeManager::GetElapsedDayInMinutes()
-{
-	return (float)InternalTime.GetTimeOfDay().GetTotalMinutes();
-}
 
 void ATimeManager::IncrementTime(float deltaTime)
 {
@@ -139,7 +133,6 @@ void ATimeManager::IncrementTime(float deltaTime)
 	CurrentLocalTime = ConvertToTimeDate(InternalTime);
 }
 
-
 void ATimeManager::SetCurrentLocalTime(float time)
 {
 	float minute = FMath::Frac(time / 60) * 60;
@@ -148,50 +141,5 @@ void ATimeManager::SetCurrentLocalTime(float time)
 	FTimeDateStruct newTD = FTimeDateStruct(InternalTime.GetYear(), InternalTime.GetMonth(), InternalTime.GetDay(),
 		FPlatformMath::FloorToInt(time / 60), minute, second, millisec);
 
-	InitializeTime(newTD, OffsetUTC, bAllowDaylightSavings, Latitude, Longitude);
+	InitializeTime(newTD);
 }
-
-
-int32 ATimeManager::GetDaysInYear(int32 year)
-{
-	return FDateTime::DaysInYear(year);
-}
-
-
-int32 ATimeManager::GetDaysInMonth(int32 year, int32 month)
-{
-	return FDateTime::DaysInMonth(year, month);
-}
-
-
-int32 ATimeManager::GetDayOfYear(FTimeDateStruct time)
-{
-	return ConvertToDateTime(time).GetDayOfYear();
-}
-
-
-float ATimeManager::GetDayPhase()
-{
-	return GetElapsedDayInMinutes() / 1440.0;
-}
-
-
-float ATimeManager::GetYearPhase()
-{
-	return InternalTime.DaysInYear(InternalTime.GetYear()) / (InternalTime.GetDayOfYear() + (GetElapsedDayInMinutes() / 1440));
-}
-
-
-bool ATimeManager::IsLeapYear(int32 year)
-{
-	bool isLeap = false;
-
-	if ((year % 4) == 0)
-	{
-		isLeap = (year % 100) == 0 ? (year % 400) == 0 : true;
-	}
-	return isLeap;
-}
-
-
-

@@ -40,17 +40,17 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	// Use System Time instead of CurrentLocalTime struct
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		bool bUseSystemTime = true;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		bool bAutoTick = true;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		bool bFreezeTime = false;
 
 	// Current Local Clock Time (LCT)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		FTimeDateStruct CurrentLocalTime;
 
 	// The Latitude of the local location (-90 to +90 in degrees)
@@ -96,7 +96,7 @@ public:
 	* @param: time (TimeDate) - The TimeDate value to calculate from.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void InitializeTime(FTimeDateStruct in_Time, int32 in_OffsetUTC, bool in_bAllowDaylightSavings, float in_Latitude, float in_Longitude);
+		void InitializeTime(FTimeDateStruct in_Time);
 
 
 	/**

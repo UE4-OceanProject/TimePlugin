@@ -4,8 +4,6 @@
 
 #include "TimeManager.h"
 #include "ModuleManager.h"
-#include "Engine/EngineBaseTypes.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(TimePlugin, Log, All);
 
@@ -16,9 +14,7 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
-	void OnWorldCreated(UWorld* World, const UWorld::InitializationValues IVS);
-
-	void InitTime_SystemTime();
+	void CheckSingletonActor(UWorld * World, const UWorld::InitializationValues IVS);
 
 	/**
 	* Singleton-like access to this module's interface.  This is just for convenience!
