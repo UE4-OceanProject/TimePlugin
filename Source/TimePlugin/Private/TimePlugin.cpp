@@ -9,6 +9,7 @@
 
 #include "TimePlugin.h"
 #include "EngineUtils.h"
+#include "Editor/EditorEngine.h"
 
 DEFINE_LOG_CATEGORY(TimePlugin);
 
@@ -20,7 +21,7 @@ void FTimePlugin::StartupModule()
 
 	//Auto create our TimeManager
 	//This is called everytime UWorld is created, which is a lot in the editor (every opened BP gets a UWorld)
-	FWorldDelegates::OnPostWorldInitialization.AddRaw(this, &FTimePlugin::CheckSingletonActor);
+	FWorldDelegates::OnPostWorldInitialization.AddRaw(this, &FTimePlugin::InitSingletonActor);
 }
 
 void FTimePlugin::ShutdownModule()
@@ -30,39 +31,68 @@ void FTimePlugin::ShutdownModule()
 	FWorldDelegates::OnPostWorldInitialization.RemoveAll(this);
 }
 
-void FTimePlugin::CheckSingletonActor(UWorld * World, const UWorld::InitializationValues IVS)
+void FTimePlugin::EnforceSingletonActor(UWorld * World)
 {
-
-	//Make sure we are in the correct UWorld!
-	if (World->WorldType == EWorldType::Game || EWorldType::PIE || EWorldType::GamePreview || EWorldType::GameRPC || EWorldType::Editor || EWorldType::PIE)
+	//Make sure there is only one instance of this actor!
+	//Actor is not blueprintable, but users will find other ways!!
+	bool bFoundFirstInstance = false;
+	for (TActorIterator<ATimeManager> ActorItr(World); ActorItr; ++ActorItr)
 	{
-		//If we already have a TimeManagerActor do not spawn another one
-		//Just store it as the current TimeManagerActor for other plugins to use
-		//Only pick the first instance, still need to code in single instance enforcement
-		bool bFoundFirstInstance = false;
-		for (TActorIterator<ATimeManager> ActorItr(World); ActorItr; ++ActorItr)
+		if (bFoundFirstInstance == false)
 		{
-			if (bFoundFirstInstance == false)
-			{
-				TimeManagerActor = *ActorItr;
-				bFoundFirstInstance = true;
-			}
-			else
-			{
-				ActorItr->Destroy();
-			}
+			bFoundFirstInstance = true;
 		}
-		if (bFoundFirstInstance == true)
+		else
 		{
-			return;
+			ActorItr->Destroy();
 		}
-		FVector location = FVector(0, 0, 0);
-		FRotator rotate = FRotator(0, 0, 0);
-		FActorSpawnParameters SpawnInfo;
-		TimeManagerActor = World->SpawnActor<ATimeManager>(ATimeManager::StaticClass(), location, rotate, SpawnInfo);
-
 	}
 }
-	
+
+ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld * World)
+{
+	FVector location = FVector(0, 0, 0);
+	FRotator rotate = FRotator(0, 0, 0);
+	FActorSpawnParameters SpawnInfo;
+	return World->SpawnActor<ATimeManager>(ATimeManager::StaticClass(), location, rotate, SpawnInfo);
+}
+
+void FTimePlugin::InitSingletonActor(UWorld * World, const UWorld::InitializationValues IVS)
+{
+	//Make sure we are in the correct UWorld!
+	if (World->WorldType == EWorldType::Game || EWorldType::PIE || EWorldType::GamePreview || EWorldType::GameRPC || EWorldType::Editor)
+	{
+		//If we already have a TimeManagerEditorActor in the editor level, do not spawn another one
+		//This also auto spawns a TimeManagerActor in the game world, if the user somehow sneaks a map in
+		//that has not been opened while the plugin was active!
+
+		EnforceSingletonActor(World);
+
+		for (TActorIterator<ATimeManager> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			//If TimeManager already exists
+			return;
+		}
+
+		//Spawn TimeManager since there isn't one already
+		SpawnSingletonActor(World);
+	}
+}
+
+ATimeManager * FTimePlugin::GetSingletonActor(UObject* WorldContextObject)
+{
+	UWorld* World = WorldContextObject->GetWorld();
+
+	EnforceSingletonActor(World);
+
+	for (TActorIterator<ATimeManager> ActorItr(World); ActorItr; ++ActorItr)
+	{
+		return *ActorItr;
+	}
+
+	//In the impossible case that we don't have an actor, spawn one!
+	return SpawnSingletonActor(World);
+}
+
 IMPLEMENT_MODULE(FTimePlugin, TimePlugin)
 
