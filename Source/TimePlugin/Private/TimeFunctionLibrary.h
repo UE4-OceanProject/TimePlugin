@@ -11,8 +11,8 @@
 
 #include "TimePlugin.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "BPFunctionLibrary.generated.h"
- 
+#include "TimeFunctionLibrary.generated.h"
+
 /*
 *	Function library class.
 *	Each function in it is expected to be static and represents blueprint node that can be called in any blueprint.
@@ -31,20 +31,14 @@
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
 
-UCLASS() 
-class UTimeManagerFunctionLibrary :	public UBlueprintFunctionLibrary
+UCLASS()
+class TIMEPLUGIN_API UTimeManagerFunctionLibrary : public UBlueprintFunctionLibrary
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Time Instance", Keywords = ""), meta = (WorldContext = "WorldContextObject"), Category = "TimeManager")
-	static ATimeManager * GetTimeManager(UObject* WorldContextObject)
+		UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Time Instance", Keywords = ""), meta = (WorldContext = "WorldContextObject"), Category = "TimeManager")
+		static ATimeManager * GetTimeManager(UObject* WorldContextObject)
 	{
 		return FTimePlugin::Get().GetSingletonActor(WorldContextObject);
 	}
 };
-
-UTimeManagerFunctionLibrary::UTimeManagerFunctionLibrary(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-
-}

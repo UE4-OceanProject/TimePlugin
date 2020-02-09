@@ -5,16 +5,16 @@
   "FriendlyName": "TimePlugin",
   "Description": "Adjustable Latitude, Longitude, and Time Zones  with a complete calendar and time component that can provide a 1:1 simulation of real world data in the past, present, or future.",
   "Category": "Time",
-  "CreatedBy": "DotCam",
-  "CreatedByURL": "https://forums.unrealengine.com/showthread.php?42092-Community-Project-WIP-Weather-amp-Ocean-Water-Shader",
+  "CreatedBy": "EvoPulse",
+  "CreatedByURL": "",
   "DocsURL": "",
-  "SupportURL": "https://forums.unrealengine.com/showthread.php?42092-Community-Project-WIP-Weather-amp-Ocean-Water-Shader",
+  "SupportURL": "",
   "EnabledByDefault": true,
   "CanContainContent": true,
   "Modules": [
     {
       "Name": "TimePlugin",
-      "Type": "Developer",
+      "Type": "Runtime",
       "LoadingPhase": "PreDefault"
     }
   ]

@@ -24,7 +24,7 @@ public:
 	void EnforceSingletonActor(UWorld * World);
 	ATimeManager * SpawnSingletonActor(UWorld * World);
 	void InitSingletonActor(UWorld * World, const UWorld::InitializationValues IVS);
-	
+
 	ATimeManager * GetSingletonActor(UObject* WorldContextObject);
 
 	/**
@@ -48,3 +48,4 @@ public:
 		return FModuleManager::Get().IsModuleLoaded("TimePlugin");
 	}
 };
+
