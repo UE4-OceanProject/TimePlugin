@@ -17,8 +17,8 @@ public class TimePlugin : ModuleRules
 
     public TimePlugin(ReadOnlyTargetRules Target) : base(Target)
     {
-        //Our PrivatePCH that we want to globally #include
-        PrivatePCHHeaderFile = "Private/PrivatePCH.h";
+		//Our PrivatePCH that we want to globally #include
+		PrivatePCHHeaderFile = "Private/PrivatePCH.h";
 
         // Make sure UBT reminds us of how to keep the project IWYU compliant
         bEnforceIWYU = true;
@@ -35,7 +35,7 @@ public class TimePlugin : ModuleRules
 
         PrivateIncludePaths.AddRange(
             new string[] {
-                "TimePlugin/Private",
+                "Private",
 				
 				// ... add other private include paths required here ...
 			}

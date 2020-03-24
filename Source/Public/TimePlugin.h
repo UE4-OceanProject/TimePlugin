@@ -10,7 +10,6 @@
 #pragma once
 
 #include "TimeManager.h"
-#include "ModuleManager.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(TimePlugin, Log, All);
 
