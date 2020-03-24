@@ -1,19 +1,10 @@
-/*=================================================
-* For parts referencing UE4 code, the following copyright applies:
-* Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
-*
-* Feel free to use this software in any commercial/free game.
-* Selling this as a plugin/item, in whole or part, is not allowed.
-* See LICENSE for full licensing details.
-* =================================================*/
-
 #pragma once
 
 #include "GameFramework/Actor.h"
 #include "TimeDateStruct.h"
 #include "TimeManager.generated.h"
 
-//An actor based calendar system for tracking date + time, and Sun/Moon rotation/phase.
+//An actor based calendar system for tracking date + time.
 //Transient will prevent this from being saved since we autospawn this anyways
 //Removed the Transient property, plugin will spawn this if its missing, and wont if its already there
 UCLASS(NotBlueprintable)
@@ -39,7 +30,7 @@ public:
 
 	// Current Local Clock Time (LCT)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
-		FTimeDateStruct CurrentLocalTime;
+		FTimeDate CurrentLocalTime;
 
 	// The Latitude of the local location (-90 to +90 in degrees)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
@@ -73,29 +64,41 @@ public:
 		int32 DayOfYear = 0;
 
 
+	/** Julian century conversion constant = 100 * days per year. */
+	const double JULIAN_DAYS_PER_CENTURY = 36525.0;
+
+	/** Seconds in one day. */
+	const double SECONDS_PER_DAY = 86400.0;
+
+	/** Our default epoch. The Julian Day which represents noon on 2000-01-01. */
+	const double J2000 = 2451545.0;
+
+	// The value of the local Standard Time Meridian (15deg intervals)
+	UPROPERTY(BlueprintReadOnly, Category = "Sun Debug")
+		int32 LSTM = 0;
+
+
 	// -------------------
 	// PUBLIC FUNCTIONS
 	// -------------------
 
 	/**
-	* Name: InitializeTime
+	* Name: InitializeCalendar
 	* Description: Initializes the calendar with the provided TimeDate, and validates the range of all input values.
 	*
 	* @param: time (TimeDate) - The TimeDate value to calculate from.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void InitializeTime(FTimeDateStruct in_Time);
-
+		void InitializeTime(FTimeDate in_Time);
 
 	/**
 	* Name: SetCurrentLocalTime
-	* Description: Sets the local time from minutes, and runs InitializeTime to validate and set variables.
+	* Description: Sets the local time from minutes, and runs InitializeCalendar to validate and set variables.
 	*
 	* @param: time (float) - The number of minutes (+ frac minutes) to calculate from.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void SetCurrentLocalTime(float time);
-	
+		UFUNCTION(BlueprintCallable, Category = "TimeManager")
+			void SetCurrentLocalTime(float in_Time);
 
 	/**
 	* Name: IncrementTime
@@ -103,16 +106,13 @@ public:
 	*
 	* @param: deltaSeconds (float) - The Tick (or accumulated ticks) delta time since the last update
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		void IncrementTime(float deltaSeconds);
+		UFUNCTION(BlueprintCallable, Category = "TimeManager")
+			void IncrementTime(float in_deltaSeconds);
 
 
 
+		/* --- Utility Functions --- */
 
-
-
-	/* --- Utility Functions --- */
-	
 	/**
 	* Name: GetDayOfYear
 	* Description: Gets the number of full days elapsed in the current year for the provided date.
@@ -121,7 +121,7 @@ public:
 	* @return: int32 - The number of days elapsed in the current year.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		int32 GetDayOfYear(FTimeDateStruct time);
+		int32 GetDayOfYear(FTimeDate time);
 
 	/**
 	* Name: DaysInYear
@@ -131,7 +131,7 @@ public:
 	* @return: int32 - The total number of days in the given year.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		int32 GetDaysInYear(int32 year);
+		int32 GetDaysInYear(int32 year = 1900);
 
 	/**
 	* Name: DaysInMonth
@@ -142,7 +142,7 @@ public:
 	* @return: int32 - The number of days in the given month for the given year.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		int32 GetDaysInMonth(int32 year, int32 month);
+		int32 GetDaysInMonth(int32 year = 1900, int32 month = 1);
 
 	/**
 	* Name: GetElapsedDayInMinutes
@@ -180,7 +180,8 @@ public:
 	* @return: bool - Will return true if it is a leap year, otherwise false.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
-		bool IsLeapYear(int32 year);
+		bool IsLeapYear(int32 year = 1900);
+
 
 	//These would be normally be private, but plugins will need this stuff
 	//These are still private blueprint wise
@@ -198,18 +199,19 @@ public:
 
 	double ElapsedJD1900 = 0.0;
 
-	FTimeDateStruct ConvertToTimeDate(FDateTime dt);
+	FTimeDate ConvertToTimeDate(FDateTime dt);
 
-	FDateTime ConvertToDateTime(FTimeDateStruct td);
+	FDateTime ConvertToDateTime(FTimeDate td);
 
-	FTimeDateStruct ValidateTimeDate(FTimeDateStruct time);
+	FTimeDate ValidateTimeDate(FTimeDate time);
 
-	// TODO - Requires extra functions & rewriting to accommodate, FUTURE/NOT URGENT
-	// Designates that the calendar should use custom Date & Time struct rather than
-	// using the built in DateTime values. This is useful for worlds that have longer days,
-	// months, and years.
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "DateTime")
-	//bool UsingCustomCaledar;
+	//static TArray<int32> getDate(double jd);
+	TArray<int32> getDate(double jd);
+
+private:
+	bool bIsCalendarInitialized = false;
+
+
 
 };
 

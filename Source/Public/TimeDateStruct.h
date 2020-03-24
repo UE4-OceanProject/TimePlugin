@@ -1,35 +1,13 @@
-/*=================================================
-* For parts referencing UE4 code, the following copyright applies:
-* Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
-*
-* Feel free to use this software in any commercial/free game.
-* Selling this as a plugin/item, in whole or part, is not allowed.
-* See LICENSE for full licensing details.
-* =================================================*/
-
 #pragma once
 
+#include "CoreMinimal.h"
 #include "TimeDateStruct.generated.h"
 
+
 USTRUCT(BlueprintType)
-struct FTimeDateStruct
-    {
+struct FTimeDate
+{
 	GENERATED_USTRUCT_BODY()
-
-		// Default constructor
-	FTimeDateStruct() { FTimeDateStruct(0, 0, 0, 0, 0, 0, 0); }
-
-	// Copy Constructor
-	//FTimeDateStruct(FTimeDateStruct& time) { FTimeDateStruct(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second, time.Millisecond); }
-
-	// Date values only constructor
-	FTimeDateStruct(int32 year, int32 month, int32 day) { FDateTime(year, month, day, 0, 0, 0, 0); }
-
-	// Fully initialized constructor
-	FTimeDateStruct(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 millisecond)
-	    {
-		Year = year; Month = month; Day = day; Hour = hour; Minute = minute; Second = second; Millisecond = millisecond;
-	    }
 
 	// The millisecond value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
@@ -37,73 +15,37 @@ struct FTimeDateStruct
 
 	// The second value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Second;
+		int32 Second;
 
 	// The minute value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Minute;
+		int32 Minute;
 
 	// The hour value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Hour;
+		int32 Hour;
 
 	// The day value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Day;
+		int32 Day;
 
 	// The month value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Month;
+		int32 Month;
 
 	// The year value for this time and date.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
-	int32 Year;
+		int32 Year;
 
-
-	// The following functions are only used in code.
-
-
-
-	// 
-	// 	bool IsEqual(const FTimeDateStruct& other) const
-	// 		{
-	// 		return (Year == other.Year) && (Month == other.Month) && (Day == other.Day) &&
-	// 			(Hour == other.Hour) && (Minute == other.Minute) && (Second == other.Second);
-	// 		}
-	// 
-	// 	bool operator==(const FTimeDateStruct& other) const
-	// 		{
-	// 		return IsEqual(other);
-	// 		}
-	// 
-	// 	bool operator!=(const FTimeDateStruct& other) const
-	// 		{
-	// 		return !IsEqual(other);
-	// 		}
-	// 
-	// 	bool operator>(const FTimeDateStruct& other) const
-	// 		{
-	// 		return (Year > other.Year) || (Month > other.Month) || (Day > other.Day) ||
-	// 			(Hour > other.Hour) || (Minute > other.Minute) || (Second > other.Second);
-	// 		}
-	// 
-	// 	bool operator>=(const FTimeDateStruct& other) const
-	// 		{
-	// 		return IsEqual(other) || (Year > other.Year) || (Month > other.Month) || (Day > other.Day) ||
-	// 			(Hour > other.Hour) || (Minute > other.Minute) || (Second > other.Second);
-	// 		}
-	// 
-	// 	bool operator<(const FTimeDateStruct& other) const
-	// 		{
-	// 		return (Year < other.Year) || (Month < other.Month) || (Day < other.Day) ||
-	// 			(Hour < other.Hour) || (Minute < other.Minute) || (Second < other.Second);
-	// 		}
-	// 
-	// 	bool operator<=(const FTimeDateStruct& other) const
-	// 		{
-	// 		return IsEqual(other) || (Year < other.Year) || (Month < other.Month) || (Day < other.Day) ||
-	// 			(Hour < other.Hour) || (Minute < other.Minute) || (Second < other.Second);
-	// 		}
+	// Fully initialized constructor
+	FTimeDate(int32 InYear = 1900, int32 InMonth = 1, int32 InDay = 1, int32 InHour = 0, int32 InMinute = 0, int32 InSecond = 0, int32 InMillisecond = 0)
+	{
+		Year = InYear;
+		Month = InMonth;
+		Day = InDay;
+		Hour = InHour;
+		Minute = InMinute;
+		Second = InSecond;
+		Millisecond = InMillisecond;
+	}
 };
-
-
