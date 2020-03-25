@@ -7,7 +7,7 @@
 //An actor based calendar system for tracking date + time.
 //Transient will prevent this from being saved since we autospawn this anyways
 //Removed the Transient property, plugin will spawn this if its missing, and wont if its already there
-UCLASS(NotBlueprintable)
+UCLASS(Blueprintable)
 class ATimeManager : public AActor
 {
 	GENERATED_UCLASS_BODY()
