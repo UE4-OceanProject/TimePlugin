@@ -20,7 +20,7 @@ public:
 
 	// Use System Time instead of CurrentLocalTime struct
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
-		bool bUseSystemTime = true;
+		bool bUseSystemTime = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		bool bAutoTick = true;
@@ -34,11 +34,11 @@ public:
 
 	// The Latitude of the local location (-90 to +90 in degrees)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
-		float Latitude = 0.0f;
+		float Latitude = 30.0f;
 
 	// The Longitude of the local location (-180 to +180 in degrees)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
-		float Longitude = 0.0f;
+		float Longitude = 101.0f;
 
 	// The number of hours offset from UTC for the local location (value in the range of -12 to +12 hours from UTC)	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
