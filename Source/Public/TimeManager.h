@@ -44,24 +44,25 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		int32 OffsetUTC = 0;
 
-	// The number of hours (0 or 1) to subtract for the current TimeDate for Daylight Savings Time (if enabled)
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
-		int32 OffsetDST = 0;
-
 	// Determines whether Daylight Savings time should be enabled for the local location
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		bool bAllowDaylightSavings = false;
-
-	// Determines whether Daylight Savings is active for the current date
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
-		bool bDaylightSavingsActive = false;
 
 	// The value to multiply the base game time by (1 second real time is multiplied to equal X seconds in game)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
 		float TimeScaleMultiplier = 1.0f;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "TimeManager")
+	// Shows the number of hours (0 or 1) being subtracted for the current TimeDate for Daylight Savings Time (if enabled)
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+		int32 OffsetDST = 0;
+
+	//Shows the current day of year
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
 		int32 DayOfYear = 0;
+
+	// Shows whether Daylight Savings is active for the current date
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+		bool bDaylightSavingsActive = false;
 
 
 	/** Julian century conversion constant = 100 * days per year. */
@@ -74,7 +75,7 @@ public:
 	const double J2000 = 2451545.0;
 
 	// The value of the local Standard Time Meridian (15deg intervals)
-	UPROPERTY(BlueprintReadOnly, Category = "Sun Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
 		int32 LSTM = 0;
 
 
