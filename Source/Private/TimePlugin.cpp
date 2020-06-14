@@ -1,21 +1,14 @@
-/*=================================================
-* For parts referencing UE4 code, the following copyright applies:
-* Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
-*
-* Feel free to use this software in any commercial/free game.
-* Selling this as a plugin/item, in whole or part, is not allowed.
-* See LICENSE for full licensing details.
-* =================================================*/
+// For copyright see LICENSE in EnvironmentProject root dir, or:
+//https://github.com/UE4-OceanProject/OceanProject/blob/Master-Environment-Project/LICENSE
 
 #include "TimePlugin.h"
 #include "EngineUtils.h"
-#include "Editor/EditorEngine.h"
 
 DEFINE_LOG_CATEGORY(TimePlugin);
 
 void FTimePlugin::StartupModule()
 {
-	UE_LOG(TimePlugin, Warning, TEXT("TimePlugin StartupModle() Register OnWorldCreated delegate"));
+	UE_LOG(TimePlugin, Log, TEXT("TimePlugin StartupModle() Register OnWorldCreated delegate"));
 
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
@@ -31,7 +24,7 @@ void FTimePlugin::ShutdownModule()
 	FWorldDelegates::OnPostWorldInitialization.RemoveAll(this);
 }
 
-void FTimePlugin::EnforceSingletonActor(UWorld * World)
+void FTimePlugin::EnforceSingletonActor(UWorld* World)
 {
 	//Make sure there is only one instance of this actor!
 	//Actor is not blueprintable, but users will find other ways!!
@@ -49,7 +42,7 @@ void FTimePlugin::EnforceSingletonActor(UWorld * World)
 	}
 }
 
-ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld * World)
+ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld* World)
 {
 	FVector location = FVector(0, 0, 0);
 	FRotator rotate = FRotator(0, 0, 0);
@@ -57,7 +50,7 @@ ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld * World)
 	return World->SpawnActor<ATimeManager>(ATimeManager::StaticClass(), location, rotate, SpawnInfo);
 }
 
-void FTimePlugin::InitSingletonActor(UWorld * World, const UWorld::InitializationValues IVS)
+void FTimePlugin::InitSingletonActor(UWorld* World, const UWorld::InitializationValues IVS)
 {
 	//Make sure we are in the correct UWorld!
 	if (World->WorldType == EWorldType::Game || EWorldType::PIE || EWorldType::GamePreview || EWorldType::GameRPC || EWorldType::Editor)

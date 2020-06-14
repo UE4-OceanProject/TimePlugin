@@ -1,30 +1,14 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+// For copyright see LICENSE in EnvironmentProject root dir, or:
+//https://github.com/UE4-OceanProject/OceanProject/blob/Master-Environment-Project/LICENSE
 
 using UnrealBuildTool;
 using System.IO;
 
 public class TimePlugin : ModuleRules
 {
-    private string ModulePath
-    {
-        get { return Path.GetDirectoryName(ModuleDirectory); }
-    }
-
-    private string ThirdPartyPath
-    {
-        get { return Path.GetFullPath(Path.Combine(ModulePath, "../../ThirdParty/")); }
-    }
-
     public TimePlugin(ReadOnlyTargetRules Target) : base(Target)
     {
-		//Our PrivatePCH that we want to globally #include
-		PrivatePCHHeaderFile = "Private/PrivatePCH.h";
-
-        // Make sure UBT reminds us of how to keep the project IWYU compliant
-        bEnforceIWYU = true;
-
-        //Enable IWYU but keep our PrivatePCH in use
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicIncludePaths.AddRange(
             new string[] {
@@ -34,9 +18,7 @@ public class TimePlugin : ModuleRules
 
 
         PrivateIncludePaths.AddRange(
-            new string[] {
-                "Private",
-				
+            new string[] {				
 				// ... add other private include paths required here ...
 			}
             );
@@ -56,9 +38,7 @@ public class TimePlugin : ModuleRules
             new string[]
             {
                 "CoreUObject",
-                "Engine",
-                "Slate",
-                "SlateCore",
+                "Engine"
 
 				// ... add private dependencies that you statically link with here ...	
 			}
@@ -71,6 +51,9 @@ public class TimePlugin : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
             );
+
+        // Make sure UBT reminds us of how to keep the project IWYU compliant
+        bEnforceIWYU = true;
     }
 }
 
