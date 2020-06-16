@@ -10,9 +10,10 @@
 UCLASS(Blueprintable)
 class ATimeManager : public AActor
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	ATimeManager(const class FObjectInitializer& ObjectInitializer);
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
@@ -98,8 +99,8 @@ public:
 	*
 	* @param: time (float) - The number of minutes (+ frac minutes) to calculate from.
 	*/
-		UFUNCTION(BlueprintCallable, Category = "TimeManager")
-			void SetCurrentLocalTime(float in_Time);
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
+		void SetCurrentLocalTime(float in_Time);
 
 	/**
 	* Name: IncrementTime
@@ -107,20 +108,20 @@ public:
 	*
 	* @param: deltaSeconds (float) - The Tick (or accumulated ticks) delta time since the last update
 	*/
-		UFUNCTION(BlueprintCallable, Category = "TimeManager")
-			void IncrementTime(float in_deltaSeconds);
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
+		void IncrementTime(float in_deltaSeconds);
 
 
 
-		/* --- Utility Functions --- */
+	/* --- Utility Functions --- */
 
-	/**
-	* Name: GetDayOfYear
-	* Description: Gets the number of full days elapsed in the current year for the provided date.
-	*
-	* @param: time (TimeDate) - The TimeDate value to calculate from.
-	* @return: int32 - The number of days elapsed in the current year.
-	*/
+/**
+* Name: GetDayOfYear
+* Description: Gets the number of full days elapsed in the current year for the provided date.
+*
+* @param: time (TimeDate) - The TimeDate value to calculate from.
+* @return: int32 - The number of days elapsed in the current year.
+*/
 	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 		int32 GetDayOfYear(FTimeDate time);
 
@@ -215,4 +216,3 @@ private:
 
 
 };
-

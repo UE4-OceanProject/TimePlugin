@@ -30,8 +30,9 @@ class TIMEPLUGIN_API UTimeManagerFunctionLibrary : public UBlueprintFunctionLibr
 {
 	GENERATED_BODY()
 
-		UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Time Instance", Keywords = ""), meta = (WorldContext = "WorldContextObject"), Category = "TimeManager")
-		static ATimeManager * GetTimeManager(UObject* WorldContextObject)
+public:
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Time Instance", Keywords = ""), meta = (WorldContext = "WorldContextObject"), Category = "TimeManager")
+		static ATimeManager* GetTimeManager(UObject* WorldContextObject)
 	{
 		return FTimePlugin::Get().GetSingletonActor(WorldContextObject);
 	}
