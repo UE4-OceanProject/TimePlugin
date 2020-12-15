@@ -53,7 +53,9 @@ ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld* World)
 void FTimePlugin::InitSingletonActor(UWorld* World, const UWorld::InitializationValues IVS)
 {
 	//Make sure we are in the correct UWorld!
-	if (World->WorldType == EWorldType::Game || EWorldType::PIE || EWorldType::GamePreview || EWorldType::GameRPC || EWorldType::Editor)
+	if (World->WorldType == EWorldType::Game || World->WorldType == EWorldType::PIE
+        || World->WorldType == EWorldType::GamePreview || World->WorldType == EWorldType::GameRPC
+        || World->WorldType == EWorldType::Editor)
 	{
 		//If we already have a TimeManagerEditorActor in the editor level, do not spawn another one
 		//This also auto spawns a TimeManagerActor in the game world, if the user somehow sneaks a map in
@@ -88,4 +90,3 @@ ATimeManager * FTimePlugin::GetSingletonActor(UObject* WorldContextObject)
 }
 
 IMPLEMENT_MODULE(FTimePlugin, TimePlugin)
-
