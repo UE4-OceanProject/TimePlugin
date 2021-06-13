@@ -1,8 +1,13 @@
 #pragma once
 
+//#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "TimeDateStruct.h"
 #include "TimeManager.generated.h"
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimeChanged, FTimeDate, NewTime);
+
 
 //An actor based calendar system for tracking date + time.
 //Transient will prevent this from being saved since we autospawn this anyways
@@ -20,63 +25,86 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	// Use System Time instead of CurrentLocalTime struct
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		bool bUseSystemTime = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		bool bAutoTick = true;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		bool bFreezeTime = false;
 
 	// Current Local Clock Time (LCT)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		FTimeDate CurrentLocalTime;
 
 	// The Latitude of the local location (-90 to +90 in degrees)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		float Latitude = 30.0f;
 
 	// The Longitude of the local location (-180 to +180 in degrees)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		float Longitude = 101.0f;
 
 	// The number of hours offset from UTC for the local location (value in the range of -12 to +12 hours from UTC)	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		int32 OffsetUTC = 0;
 
 	// Determines whether Daylight Savings time should be enabled for the local location
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		bool bAllowDaylightSavings = false;
 
 	// The value to multiply the base game time by (1 second real time is multiplied to equal X seconds in game)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TimeManager")
 		float TimeScaleMultiplier = 1.0f;
 
 	// Shows the number of hours (0 or 1) being subtracted for the current TimeDate for Daylight Savings Time (if enabled)
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 		int32 OffsetDST = 0;
 
 	//Shows the current day of year
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 		int32 DayOfYear = 0;
 
 	// Shows whether Daylight Savings is active for the current date
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 		bool bDaylightSavingsActive = false;
 
 
-	/** Julian century conversion constant = 100 * days per year. */
+
+
+	/* called when the time changes, internal blueprint only, use delegate OnTimeChanged , for external use */
+	UFUNCTION(BlueprintImplementableEvent, Category = "TimeManager")
+		void BP_TimeChanged();
+
+
+	/* ======== DELEGATES ====== */
+	/* Called when the time changes */
+	UPROPERTY(BlueprintAssignable, Category = "TimeManager")
+		FOnTimeChanged OnTimeChanged;
+
+
+
+
+
 	const double JULIAN_DAYS_PER_CENTURY = 36525.0;
+	/** Julian century conversion constant = 100 * days per year. */
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+		float F_JULIAN_DAYS_PER_CENTRY = JULIAN_DAYS_PER_CENTURY;
 
-	/** Seconds in one day. */
 	const double SECONDS_PER_DAY = 86400.0;
+	/** Seconds in one day. */
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+		float F_SECONDS_PER_DAY = SECONDS_PER_DAY;
 
-	/** Our default epoch. The Julian Day which represents noon on 2000-01-01. */
 	const double J2000 = 2451545.0;
+	/** Our default epoch. The Julian Day which represents noon on 2000-01-01. */
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
+		float F_J2000 = J2000;
+
 
 	// The value of the local Standard Time Meridian (15deg intervals)
-	UPROPERTY(BlueprintReadOnly, Category = "TimeManager Debug")
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 		int32 LSTM = 0;
 
 
@@ -201,16 +229,19 @@ public:
 
 	double ElapsedJD1900 = 0.0;
 
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 	FTimeDate ConvertToTimeDate(FDateTime dt);
 
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 	FDateTime ConvertToDateTime(FTimeDate td);
 
+	UFUNCTION(BlueprintCallable, Category = "TimeManager")
 	FTimeDate ValidateTimeDate(FTimeDate time);
 
 	//static TArray<int32> getDate(double jd);
 	TArray<int32> getDate(double jd);
 
-private:
+	UPROPERTY(BlueprintReadOnly, Category = "TimeManager")
 	bool bIsCalendarInitialized = false;
 
 

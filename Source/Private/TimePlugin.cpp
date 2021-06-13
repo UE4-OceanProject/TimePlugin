@@ -4,17 +4,18 @@
 #include "TimePlugin.h"
 #include "EngineUtils.h"
 
-DEFINE_LOG_CATEGORY(TimePlugin);
+DEFINE_LOG_CATEGORY(LogTimePlugin);
 
 void FTimePlugin::StartupModule()
 {
-	UE_LOG(TimePlugin, Log, TEXT("TimePlugin StartupModle() Register OnWorldCreated delegate"));
+	UE_LOG(LogTimePlugin, Display, TEXT("%s:: StartupModle() Register OnWorldCreated delegate"), *PLUGIN_FUNC_LINE);
 
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
 	//Auto create our TimeManager
 	//This is called everytime UWorld is created, which is a lot in the editor (every opened BP gets a UWorld)
 	FWorldDelegates::OnPostWorldInitialization.AddRaw(this, &FTimePlugin::InitSingletonActor);
+	UE_LOG(LogTimePlugin, Display, TEXT("%s:: Module started"), *PLUGIN_FUNC_LINE);
 }
 
 void FTimePlugin::ShutdownModule()
@@ -37,6 +38,7 @@ void FTimePlugin::EnforceSingletonActor(UWorld* World)
 		}
 		else
 		{
+			UE_LOG(LogTimePlugin, Display, TEXT("%s:: found more than one TimePlugin destroying..."), *PLUGIN_FUNC_LINE);
 			ActorItr->Destroy();
 		}
 	}
@@ -44,16 +46,17 @@ void FTimePlugin::EnforceSingletonActor(UWorld* World)
 
 ATimeManager * FTimePlugin::SpawnSingletonActor(UWorld* World)
 {
-	FVector location = FVector(0, 0, 0);
-	FRotator rotate = FRotator(0, 0, 0);
 	FActorSpawnParameters SpawnInfo;
-	return World->SpawnActor<ATimeManager>(ATimeManager::StaticClass(), location, rotate, SpawnInfo);
+	ATimeManager* TimeManager = World->SpawnActor<ATimeManager>(ATimeManager::StaticClass(), FTransform::Identity, FActorSpawnParameters());
+	if (!TimeManager)
+		UE_LOG(LogTimePlugin, Display, TEXT("%s:: Failed to spawn Singleton!"), *PLUGIN_FUNC_LINE);
+	return TimeManager;
 }
 
 void FTimePlugin::InitSingletonActor(UWorld* World, const UWorld::InitializationValues IVS)
 {
 	//Make sure we are in the correct UWorld!
-	if (World->WorldType == EWorldType::Game || EWorldType::PIE || EWorldType::GamePreview || EWorldType::GameRPC || EWorldType::Editor)
+	if ((World->WorldType == EWorldType::Game) || (World->WorldType == EWorldType::PIE) || (World->WorldType == EWorldType::Editor))
 	{
 		//If we already have a TimeManagerEditorActor in the editor level, do not spawn another one
 		//This also auto spawns a TimeManagerActor in the game world, if the user somehow sneaks a map in
@@ -68,6 +71,7 @@ void FTimePlugin::InitSingletonActor(UWorld* World, const UWorld::Initialization
 		}
 
 		//Spawn TimeManager since there isn't one already
+		UE_LOG(LogTimePlugin, Display, TEXT("%s:: No TimePlugin found... spawning..."), *PLUGIN_FUNC_LINE);
 		SpawnSingletonActor(World);
 	}
 }
@@ -75,6 +79,10 @@ void FTimePlugin::InitSingletonActor(UWorld* World, const UWorld::Initialization
 ATimeManager * FTimePlugin::GetSingletonActor(UObject* WorldContextObject)
 {
 	UWorld* World = WorldContextObject->GetWorld();
+	if ((World->WorldType == EWorldType::EditorPreview) || (World->WorldType == EWorldType::GamePreview))
+		return NULL;
+	if (World->bIsRunningConstructionScript)
+		return NULL;
 
 	EnforceSingletonActor(World);
 
@@ -84,6 +92,7 @@ ATimeManager * FTimePlugin::GetSingletonActor(UObject* WorldContextObject)
 	}
 
 	//In the impossible case that we don't have an actor, spawn one!
+	UE_LOG(LogTimePlugin, Display, TEXT("%s:: Somehow we don't have a TimePlugin even after all the safeguards... spawning..."), *PLUGIN_FUNC_LINE);
 	return SpawnSingletonActor(World);
 }
 

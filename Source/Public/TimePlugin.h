@@ -3,10 +3,14 @@
 
 #pragma once
 
-#include "Engine/World.h"
 #include "TimeManager.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(TimePlugin, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogTimePlugin, Display, All);
+
+#define PLUGIN_FUNC (FString(__FUNCTION__))              // Current Class Name + Function Name where this is called
+#define PLUGIN_LINE (FString::FromInt(__LINE__))         // Current Line Number in the code where this is called
+#define PLUGIN_FUNC_LINE (PLUGIN_FUNC + "(Line: " + PLUGIN_LINE + ")") // Current Class and Line Number where this is called!
+
 
 class TIMEPLUGIN_API FTimePlugin : public IModuleInterface
 {

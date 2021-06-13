@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreMinimal.h"
+//#include "CoreMinimal.h"
 #include "TimeDateStruct.generated.h"
 
 
@@ -14,27 +14,28 @@ struct FTimeDate
 	int32 Year;
 
 	// The month value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 12), Category = "Time")
 	int32 Month;
 
 	// The day value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 31), Category = "Time")
 	int32 Day;
 
 	// The hour value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 23), Category = "Time")
 	int32 Hour;
 
 	// The minute value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 59), Category = "Time")
 	int32 Minute;
 
 	// The second value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 59), Category = "Time")
 	int32 Second;
 
 	// The millisecond value for this time and date.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = 0, ClampMax = 999), Category = "Time")
 	int32 Millisecond;
 
 	// Fully initialized constructor

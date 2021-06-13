@@ -1,6 +1,5 @@
 #include "TimeManager.h"
-#include "Kismet/KismetMathLibrary.h"
-
+#include "TimePlugin.h"
 
 ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
@@ -9,7 +8,8 @@ ATimeManager::ATimeManager(const class FObjectInitializer& PCIP) : Super(PCIP)
 
 void ATimeManager::OnConstruction(const FTransform& Transform)
 {
-
+	ValidateTimeDate(CurrentLocalTime);
+	OnTimeChanged.Broadcast(CurrentLocalTime);
 }
 
 void ATimeManager::BeginPlay()
@@ -70,6 +70,8 @@ void ATimeManager::InitializeTime(FTimeDate time)
 
 	CurrentLocalTime = time;
 	bIsCalendarInitialized = true;
+	OnTimeChanged.Broadcast(time); // Added delegate call 
+	BP_TimeChanged();
 }
 
 FTimeDate ATimeManager::ValidateTimeDate(FTimeDate time)
@@ -92,7 +94,14 @@ FTimeDate ATimeManager::ConvertToTimeDate(FDateTime dt)
 
 FDateTime ATimeManager::ConvertToDateTime(FTimeDate td)
 {
-	return FDateTime(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond);
+	if (FDateTime::Validate(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond)) {
+		return FDateTime(td.Year, td.Month, td.Day, td.Hour, td.Minute, td.Second, td.Millisecond);
+	}
+	else 
+	{
+		UE_LOG(LogTimePlugin, Warning, TEXT("TimePlugin ConvertToDateTime: Invalid TimeData, quietly failing to (1,1,1,0,0,0,0)"));
+		return FDateTime(1, 1, 1, 0, 0, 0, 0);
+	}
 }
 
 
@@ -129,6 +138,9 @@ void ATimeManager::IncrementTime(float deltaTime)
 		}
 	}
 	CurrentLocalTime = ConvertToTimeDate(InternalTime);
+
+	OnTimeChanged.Broadcast(CurrentLocalTime);
+	BP_TimeChanged();
 }
 
 
